@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAS FÍSICOS - Physical Map Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            grid-column: 1 / -1;
+            color: white;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button.secondary {
+            background: #e74c3c;
+        }
+        
+        button.secondary:hover {
+            background: #c0392b;
+        }
+        
+        button.success {
+            background: #27ae60;
+        }
+        
+        button.success:hover {
+            background: #229954;
+        }
+        
+        .feature-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+        
+        .feature-item h4 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .feature-item p {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+        
+        .preview {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            background: #f9f9f9;
+            margin-top: 15px;
+        }
+        
+        .preview img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 5px;
+        }
+        
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .coordinates-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .feature-type-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-type-btn {
+            padding: 10px;
+            background: #ecf0f1;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .feature-type-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .feature-type-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .success-message a {
+            color: #155724;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🗺️ MAPAS FÍSICOS - Physical Map Creator</h1>
+    
+    <div class="container">
+        <!-- LEFT PANEL: MAP CONFIGURATION -->
+        <div class="card">
+            <h2>Map Configuration</h2>
+            
+            <div class="form-group">
+                <label for="mapTitle">Map Title:</label>
+                <input type="text" id="mapTitle" placeholder="e.g., South America Physical Map" value="Physical Map">
+            </div>
+            
+            <div class="form-group">
+                <label for="mapTemplate">Select Region:</label>
+                <select id="mapTemplate">
+                    <option value="south_america">South America</option>
+                    <option value="europe">Europe</option>
+                    <option value="africa">Africa</option>
+                    <option value="asia">Asia</option>
+                    <option value="north_america">North America</option>
+                </select>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Add Features</h2>
+            
+            <div class="feature-type-selector">
+                <button class="feature-type-btn active" data-type="city">🏙️ City</button>
+                <button class="feature-type-btn" data-type="mountain">⛰️ Mountain</button>
+                <button class="feature-type-btn" data-type="river">💧 River</button>
+                <button class="feature-type-btn" data-type="lake">🏞️ Lake</button>
+                <button class="feature-type-btn" data-type="forest">🌲 Forest</button>
+                <button class="feature-type-btn" data-type="desert">🏜️ Desert</button>
+            </div>
+            
+            <!-- Dynamic form fields based on feature type -->
+            <div id="featureForm"></div>
+            
+            <button class="success" id="addFeatureBtn">+ Add Feature</button>
+            
+            <h2 style="margin-top: 30px;">Features Added</h2>
+            <div id="featuresList"></div>
+            
+            <button id="previewBtn" style="margin-top: 20px;">👁️ Preview Map</button>
+            <button id="downloadBtn" class="success" style="margin-top: 10px;">📥 Download Map</button>
+        </div>
+        
+        <!-- RIGHT PANEL: MAP PREVIEW -->
+        <div class="card">
+            <h2>Map Preview</h2>
+            
+            <div class="success-message" id="successMessage">
+                Map created successfully! <a href="#" id="downloadLink">Download it here</a>
+            </div>
+            
+            <div class="preview" id="preview">
+                <p style="color: #999; padding: 40px;">Preview will appear here</p>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Creating your map...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentFeatureType = 'city';
+        let features = [];
+        
+        const featureConfigs = {
+            city: {
+                name: 'City',
+                fields: [
+                    { name: 'featureName', label: 'City Name', type: 'text', placeholder: 'e.g., São Paulo' },
+                    { name: 'posX', label: 'X Position (0-800)', type: 'number', min: 0, max: 800, value: 100 },
+                    { name: 'posY', label: 'Y Position (0-900)', type: 'number', min: 0, max: 900, value: 100 },
+                    { name: 'color', label: 'Color', type: 'color', value: '#FF0000' }
+                ]
+            },
+            mountain: {
+                name: 'Mountain Range',
+                fields: [
+                    { name: 'featureName', label: 'Mountain Name', type: 'text', placeholder: 'e.g., Andes' },
+                    { name: 'color', label: 'Color', type: 'color', value: '#8B7355' }
+                ],
+                helper: 'Enter coordinates as comma-separated pairs (x1,y1 x2,y2 x3,y3...)'
+            },
+            river: {
+                name: 'River',
+                fields: [
+                    { name: 'featureName', label: 'River Name', type: 'text', placeholder: 'e.g., Amazon' },
+                    { name: 'color', label: 'Color', type: 'color', value: '#4A90E2' }
+                ],
+                helper: 'Enter coordinates as comma-separated pairs (x1,y1 x2,y2 x3,y3...)'
+            },
+            lake: {
+                name: 'Lake',
+                fields: [
+                    { name: 'featureName', label: 'Lake Name', type: 'text', placeholder: 'e.g., Lake Titicaca' },
+                    { name: 'centerX', label: 'Center X (0-800)', type: 'number', min: 0, max: 800, value: 100 },
+                    { name: 'centerY', label: 'Center Y (0-900)', type: 'number', min: 0, max: 900, value: 100 },
+                    { name: 'radius', label: 'Radius', type: 'number', min: 5, max: 100, value: 20 },
+                    { name: 'color', label: 'Color', type: 'color', value: '#4A90E2' }
+                ]
+            },
+            forest: {
+                name: 'Forest',
+                fields: [
+                    { name: 'featureName', label: 'Forest Name', type: 'text', placeholder: 'e.g., Amazon Rainforest' },
+                    { name: 'color', label: 'Color', type: 'color', value: '#2D5016' }
+                ],
+                helper: 'Enter coordinates as comma-separated pairs (x1,y1 x2,y2 x3,y3...)'
+            },
+            desert: {
+                name: 'Desert',
+                fields: [
+                    { name: 'featureName', label: 'Desert Name', type: 'text', placeholder: 'e.g., Atacama Desert' },
+                    { name: 'color', label: 'Color', type: 'color', value: '#F4D03F' }
+                ],
+                helper: 'Enter coordinates as comma-separated pairs (x1,y1 x2,y2 x3,y3...)'
+            }
+        };
+        
+        // Feature type selector
+        document.querySelectorAll('.feature-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.feature-type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFeatureType = btn.dataset.type;
+                renderFeatureForm();
+            });
+        });
+        
+        function renderFeatureForm() {
+            const config = featureConfigs[currentFeatureType];
+            let html = '';
+            
+            if (config.helper) {
+                html += `<div class="form-group" style="background: #e8f4f8; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                    <small>${config.helper}</small>
+                </div>`;
+            }
+            
+            config.fields.forEach(field => {
+                if (field.type === 'color') {
+                    html += `<div class="form-group">
+                        <label for="${field.name}">${field.label}</label>
+                        <input type="${field.type}" id="${field.name}" value="${field.value}">
+                    </div>`;
+                } else {
+                    html += `<div class="form-group">
+                        <label for="${field.name}">${field.label}</label>
+                        <input type="${field.type}" id="${field.name}" placeholder="${field.placeholder || ''}" 
+                               value="${field.value || ''}" ${field.min ? `min="${field.min}"` : ''} ${field.max ? `max="${field.max}"` : ''}>
+                    </div>`;
+                }
+            });
+            
+            // Add coordinates input for path-based features
+            if (['mountain', 'river', 'forest', 'desert'].includes(currentFeatureType)) {
+                html += `<div class="form-group">
+                    <label for="coordinates">Coordinates:</label>
+                    <textarea id="coordinates" placeholder="x1,y1 x2,y2 x3,y3" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: monospace;" rows="4"></textarea>
+                </div>`;
+            }
+            
+            document.getElementById('featureForm').innerHTML = html;
+        }
+        
+        renderFeatureForm();
+        
+        function getFeatureData() {
+            const config = featureConfigs[currentFeatureType];
+            const data = { type: currentFeatureType };
+            
+            config.fields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) {
+                    data[field.name] = element.value;
+                }
+            });
+            
+            // Parse coordinates for path-based features
+            if (['mountain', 'river', 'forest', 'desert'].includes(currentFeatureType)) {
+                const coordsText = document.getElementById('coordinates').value;
+                const points = coordsText.split(' ').map(pair => {
+                    const [x, y] = pair.split(',').map(v => parseInt(v.trim()));
+                    return [x, y];
+                }).filter(p => !isNaN(p[0]) && !isNaN(p[1]));
+                
+                if (points.length < 2) {
+                    alert('Please enter at least 2 coordinate pairs');
+                    return null;
+                }
+                data.points = points;
+            }
+            
+            return data;
+        }
+        
+        document.getElementById('addFeatureBtn').addEventListener('click', () => {
+            const data = getFeatureData();
+            if (!data) return;
+            
+            if (!data.featureName || data.featureName.trim() === '') {
+                alert('Please enter a feature name');
+                return;
+            }
+            
+            let featureObj = {
+                type: data.type,
+                name: data.featureName,
+                color: data.color || '#000000'
+            };
+            
+            if (data.type === 'city') {
+                featureObj.position = [parseInt(data.posX), parseInt(data.posY)];
+            } else if (data.type === 'lake') {
+                featureObj.center = [parseInt(data.centerX), parseInt(data.centerY)];
+                featureObj.radius = parseInt(data.radius) || 20;
+            } else if (['mountain', 'river', 'forest', 'desert'].includes(data.type)) {
+                featureObj.points = data.points;
+            }
+            
+            features.push(featureObj);
+            renderFeaturesList();
+            document.getElementById('coordinates').value = '';
+            config.fields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) element.value = field.value || '';
+            });
+        });
+        
+        function renderFeaturesList() {
+            const html = features.map((feature, index) => `
+                <div class="feature-item">
+                    <h4>${feature.name} (${feature.type})</h4>
+                    <p style="display: inline-block; width: 15px; height: 15px; background: ${feature.color}; border-radius: 3px; vertical-align: middle;"></p>
+                    <button class="remove-btn" onclick="removeFeature(${index})">Remove</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('featuresList').innerHTML = html || '<p style="color: #999;">No features added yet</p>';
+        }
+        
+        window.removeFeature = (index) => {
+            features.splice(index, 1);
+            renderFeaturesList();
+        };
+        
+        document.getElementById('previewBtn').addEventListener('click', async () => {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/preview-map', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        template: document.getElementById('mapTemplate').value,
+                        title: document.getElementById('mapTitle').value,
+                        features: features
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('preview').innerHTML = `<img src="${data.image}" alt="Map Preview">`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating preview');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/create-map', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        template: document.getElementById('mapTemplate').value,
+                        title: document.getElementById('mapTitle').value,
+                        features: features
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('preview').innerHTML = `<img src="/api/download-map/${data.filename}?t=${Date.now()}" alt="Map">`;
+                    document.getElementById('downloadLink').href = data.url;
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating map');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Mapas Físicos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗺️ Creador de Mapas Físicos</h1>
+            <p>Herramienta para crear mapas educativos interactivos</p>
+        </header>
+
+        <div class="workspace">
+            <!-- Control Panel -->
+            <aside class="control-panel">
+                <div class="panel-section">
+                    <h3>📋 Configuración del Mapa</h3>
+                    <label>
+                        Nombre del Mapa:
+                        <input type="text" id="mapName" placeholder="Ej: Mapa de Sudamérica">
+                    </label>
+                    <label>
+                        Ancho (px):
+                        <input type="number" id="mapWidth" value="800" min="400">
+                    </label>
+                    <label>
+                        Alto (px):
+                        <input type="number" id="mapHeight" value="600" min="300">
+                    </label>
+                    <button id="resizeBtn" class="btn">Aplicar Tamaño</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>🎨 Elementos Geográficos</h3>
+                    
+                    <div class="tool-group">
+                        <label>Montañas:</label>
+                        <button id="addMountains" class="tool-btn" data-type="mountains">⛰️ Agregar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Ríos:</label>
+                        <button id="addRivers" class="tool-btn" data-type="rivers">🌊 Dibujar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Lagos:</label>
+                        <button id="addLakes" class="tool-btn" data-type="lakes">💧 Agregar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Bosques:</label>
+                        <button id="addForests" class="tool-btn" data-type="forests">🌲 Agregar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Desiertos:</label>
+                        <button id="addDeserts" class="tool-btn" data-type="deserts">🏜️ Agregar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Ciudades/Puntos:</label>
+                        <button id="addCities" class="tool-btn" data-type="cities">🏙️ Agregar</button>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Texto/Etiquetas:</label>
+                        <button id="addText" class="tool-btn" data-type="text">✏️ Agregar</button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>🎨 Colores</h3>
+                    <label>
+                        Color Montañas:
+                        <input type="color" id="colorMountains" value="#8B7355">
+                    </label>
+                    <label>
+                        Color Ríos:
+                        <input type="color" id="colorRivers" value="#4169E1">
+                    </label>
+                    <label>
+                        Color Lagos:
+                        <input type="color" id="colorLakes" value="#87CEEB">
+                    </label>
+                    <label>
+                        Color Bosques:
+                        <input type="color" id="colorForests" value="#228B22">
+                    </label>
+                    <label>
+                        Color Desiertos:
+                        <input type="color" id="colorDeserts" value="#F4A460">
+                    </label>
+                </div>
+
+                <div class="panel-section">
+                    <h3>💾 Guardar/Exportar</h3>
+                    <button id="saveBtn" class="btn btn-primary">💾 Guardar JSON</button>
+                    <button id="exportPngBtn" class="btn btn-success">📥 Exportar PNG</button>
+                    <button id="loadBtn" class="btn btn-info">📂 Cargar Mapa</button>
+                    <button id="clearBtn" class="btn btn-danger">🗑️ Limpiar Todo</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>📐 Herramientas</h3>
+                    <button id="undoBtn" class="tool-btn">↶ Deshacer</button>
+                    <button id="redoBtn" class="tool-btn">↷ Rehacer</button>
+                    <button id="deleteSelected" class="tool-btn">🗑️ Eliminar Seleccionado</button>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <main class="canvas-area">
+                <canvas id="mapCanvas"></canvas>
+                <div class="canvas-info">
+                    <span id="coordinates">X: 0, Y: 0</span>
+                    <span id="tool-status">Herramienta: Seleccionar</span>
+                </div>
+            </main>
+        </div>
+
+        <!-- Hidden file input for loading -->
+        <input type="file" id="fileInput" accept=".json" style="display:none;">
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

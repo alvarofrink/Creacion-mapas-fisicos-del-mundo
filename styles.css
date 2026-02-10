@@ -1,0 +1,248 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+header h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+
+header p {
+    color: #666;
+    font-size: 1em;
+}
+
+.workspace {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 300px);
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.control-panel {
+    width: 280px;
+    background: #f8f9fa;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+
+.control-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.control-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.control-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.control-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.panel-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.panel-section h3 {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.panel-section label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.panel-section input[type="text"],
+.panel-section input[type="number"],
+.panel-section input[type="color"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.panel-section input[type="color"] {
+    padding: 4px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.tool-group {
+    margin-bottom: 12px;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn:hover {
+    background: #dee2e6;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+}
+
+.btn-info {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #3182ce;
+}
+
+.btn-danger {
+    background: #f56565;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #e53e3e;
+}
+
+.tool-btn {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+.tool-btn:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.tool-btn.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+#mapCanvas {
+    flex: 1;
+    cursor: crosshair;
+    background: white;
+    border: 2px solid #e0e0e0;
+    display: block;
+}
+
+.canvas-info {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #666;
+    border-top: 1px solid #ddd;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .workspace {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .control-panel {
+        width: 100%;
+        max-height: 300px;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.tool-btn.active {
+    animation: pulse 0.5s ease-in-out;
+}
